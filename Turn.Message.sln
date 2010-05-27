@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turn.Message", "Turn.Message\Turn.Message.csproj", "{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turn.Message.Test", "Turn.Message.Test\Turn.Message.Test.csproj", "{EA15AFFD-AF09-44FE-A9A4-BA225402382D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA15AFFD-AF09-44FE-A9A4-BA225402382D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA15AFFD-AF09-44FE-A9A4-BA225402382D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA15AFFD-AF09-44FE-A9A4-BA225402382D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA15AFFD-AF09-44FE-A9A4-BA225402382D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Turn.Message\Turn.Message.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.inheritsSet = null
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		$0.StandardHeader = $3
+		$3.inheritsSet = GPLv2License
+		$0.VersionControlPolicy = $4
+		$4.inheritsSet = Mono
+		$0.ChangeLogPolicy = $5
+		$5.UpdateMode = None
+		$5.MessageStyle = $6
+		$6.LineAlign = 0
+		$5.inheritsSet = Mono
+	EndGlobalSection
+EndGlobal
