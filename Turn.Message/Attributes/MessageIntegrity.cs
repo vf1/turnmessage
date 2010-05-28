@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MessageIntegrity : Attribute
+	public class MessageIntegrity : Attribute
 	{
 		public MessageIntegrity()
 		{

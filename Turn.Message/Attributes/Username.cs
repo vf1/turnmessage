@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Username : StringAttribute
+	public class Username : StringAttribute
 	{
 		public Username()
 		{

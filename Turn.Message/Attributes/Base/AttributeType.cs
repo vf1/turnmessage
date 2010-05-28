@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	enum AttributeType
+	public enum AttributeType
 	{
 		MappedAddress = 0x0001,
 		Username = 0x0006,

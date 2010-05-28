@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MappedAddress : AddressAttribute
+	public class MappedAddress : AddressAttribute
 	{
 		public MappedAddress()
 		{

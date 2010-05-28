@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MsUsername : RawData
+	public class MsUsername : RawData
 	{
 		public MsUsername()
 			: base(true)

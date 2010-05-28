@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	enum MessageType
+	public enum MessageType
 	{
 		AllocateRequest = 0x0003,
 		AllocateResponse = 0x0103,
@@ -52,7 +52,7 @@ namespace Turn.Message
 		BindingErrorResponse = 0x0111,
 	}
 
-	static class MessageTypeHelpers
+	public static class MessageTypeHelpers
 	{
 		public static MessageType GetErrorResponseType(this MessageType requestType)
 		{

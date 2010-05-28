@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class ChangeRequest : Attribute
+	public class ChangeRequest : Attribute
 	{
 		public ChangeRequest()
 		{

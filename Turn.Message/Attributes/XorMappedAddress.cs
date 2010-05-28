@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class XorMappedAddress : AddressAttribute
+	public class XorMappedAddress : AddressAttribute
 	{
 		public XorMappedAddress(TurnMessageRfc rfc)
 		{

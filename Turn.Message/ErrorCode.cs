@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	enum ErrorCode
+	public enum ErrorCode
 	{
 		BadRequest = 400,
 		Unauthorized = 401,
@@ -124,7 +124,7 @@ namespace Turn.Message
 		GlobalFailure = 600,
 	}
 
-	static class ReasonPhrase
+	public static class ReasonPhrase
 	{
 		public static string GetReasonPhrase(this ErrorCode errorCode)
 		{

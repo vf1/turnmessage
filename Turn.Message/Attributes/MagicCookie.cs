@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MagicCookie : UInt32Attribute
+	public class MagicCookie : UInt32Attribute
 	{
 		public const UInt32 MagicCookieValue = 0x72c64bc6;
 

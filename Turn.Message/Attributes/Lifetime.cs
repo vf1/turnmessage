@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Lifetime : UInt32Attribute
+	public class Lifetime : UInt32Attribute
 	{
 		public Lifetime()
 		{

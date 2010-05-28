@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	abstract class Attribute
+	public abstract class Attribute
 	{
 		public Attribute()
 		{

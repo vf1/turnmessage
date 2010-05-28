@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class TransactionId
+	public class TransactionId
 	{
 		public const int DefaultStartIndex = 4;
 		public const int Length = 16;

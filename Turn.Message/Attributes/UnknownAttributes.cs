@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class UnknownAttributes : Attribute
+	public class UnknownAttributes : Attribute
 	{
 		public UnknownAttributes()
 		{

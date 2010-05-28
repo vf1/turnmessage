@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class TurnMessageException : Exception
+	public class TurnMessageException : Exception
 	{
 		public TurnMessageException(ErrorCode errorCode)
 			: base()

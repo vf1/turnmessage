@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Fingerprint : UInt32Attribute
+	public class Fingerprint : UInt32Attribute
 	{
 		public Fingerprint()
 		{

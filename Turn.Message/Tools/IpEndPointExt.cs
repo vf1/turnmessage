@@ -21,7 +21,7 @@
 using System;
 using System.Net;
 
-static class IpEndPointExt
+public static class IpEndPointExt
 {
 	public static void CopyFrom(this IPEndPoint to, IPEndPoint from)
 	{

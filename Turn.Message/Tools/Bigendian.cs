@@ -22,7 +22,7 @@ using System;
 
 namespace System
 {
-	static class Bigendian
+	public static class Bigendian
 	{
 		public static UInt16 BigendianToUInt16(this byte[] bytes, int startIndex)
 		{

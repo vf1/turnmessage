@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Data : RawData
+	public class Data : RawData
 	{
 		public Data()
 			: base(false)

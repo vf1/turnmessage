@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MsSequenceNumber : Attribute
+	public class MsSequenceNumber : Attribute
 	{
 		public MsSequenceNumber()
 		{

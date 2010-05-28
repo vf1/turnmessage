@@ -23,7 +23,7 @@ using System;
 
 namespace Turn.Message
 {
-	abstract class StringAttribute : UtfAttribute
+	public abstract class StringAttribute : UtfAttribute
 	{
 		public StringAttribute()
 		{

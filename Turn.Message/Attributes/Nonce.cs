@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Nonce : StringAttribute
+	public class Nonce : StringAttribute
 	{
 		public Nonce(TurnMessageRfc rfc)
 		{

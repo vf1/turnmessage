@@ -24,7 +24,7 @@ using System.Net.Sockets;
 
 namespace Turn.Message
 {
-	abstract class AddressAttribute : Attribute
+	public abstract class AddressAttribute : Attribute
 	{
 		private IPEndPoint ipEndPoint;
 

@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class ErrorCodeAttribute : UtfAttribute
+	public class ErrorCodeAttribute : UtfAttribute
 	{
 		public ErrorCodeAttribute()
 		{

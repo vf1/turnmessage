@@ -26,7 +26,7 @@ namespace System.Text
 	/// SASLprep: Stringprep Profile for User Names and Passwords
 	/// http://tools.ietf.org/html/rfc4013
 	/// </summary>
-	static class Saslprep
+	public static class Saslprep
 	{
 		/// <summary>
 		/// SASLprep: Stringprep Profile for User Names and Passwords

@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	abstract class RawData : Attribute
+	public abstract class RawData : Attribute
 	{
 		private bool copyValue;
 

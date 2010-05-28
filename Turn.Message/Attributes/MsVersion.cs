@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class MsVersion: UInt32Attribute
+	public class MsVersion: UInt32Attribute
 	{
 		public MsVersion()
 		{

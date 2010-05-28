@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Realm : StringAttribute
+	public class Realm : StringAttribute
 	{
 		public Realm(TurnMessageRfc rfc)
 		{

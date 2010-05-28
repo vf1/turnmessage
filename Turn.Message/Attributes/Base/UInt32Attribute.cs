@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	abstract class UInt32Attribute : Attribute
+	public abstract class UInt32Attribute : Attribute
 	{
 		public UInt32Attribute()
 		{

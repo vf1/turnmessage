@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Software : StringAttribute
+	public class Software : StringAttribute
 	{
 		public Software()
 		{

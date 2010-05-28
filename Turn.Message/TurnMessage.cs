@@ -24,21 +24,21 @@ using System.Security.Cryptography;
 
 namespace Turn.Message
 {
-	enum TurnMessageRfc
+	public enum TurnMessageRfc
 	{
 		Rfc3489,
 		Rfc5389,
 		MsTurn,
 	}
 
-	enum CreditalsType
+	public enum CreditalsType
 	{
 		LongTerm,
 		ShortTerm,
 		MsAvedgea,
 	}
 
-	class TurnMessage
+	public class TurnMessage
 	{
 		private const int HeaderLength = 20;
 		private int messageIntegrityStartIndex = -1;

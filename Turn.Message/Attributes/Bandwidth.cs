@@ -22,7 +22,7 @@ using System;
 
 namespace Turn.Message
 {
-	class Bandwidth : UInt32Attribute
+	public class Bandwidth : UInt32Attribute
 	{
 		public Bandwidth()
 		{
