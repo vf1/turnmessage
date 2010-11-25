@@ -41,8 +41,8 @@ namespace Turn.Message
 	public class TurnMessage
 	{
 		private const int HeaderLength = 20;
-		private int messageIntegrityStartIndex = -1;
-		private int fingerprintStartIndex = -1;
+		private int messageIntegrityStartOffset = -1;
+		private int fingerprintStartOffset = -1;
 		private byte[] storedBytes = null;
 		private Attribute[] allAttributes = null;
 
@@ -99,12 +99,12 @@ namespace Turn.Message
 			return Parse(bytes, 0, length, rfc);
 		}
 
-		public static TurnMessage Parse(byte[] bytes, int offset, int length, TurnMessageRfc rfc)
+		public static TurnMessage Parse(byte[] bytes, int startIndex, int length, TurnMessageRfc rfc)
 		{
 			TurnMessage message = new TurnMessage();
 
-			message.ParseHeader(bytes, offset, length);
-			message.ParseAttributes(bytes, length, offset + HeaderLength, rfc);
+			message.ParseHeader(bytes, startIndex, length);
+			message.ParseAttributes(bytes, startIndex, length, rfc);
 
 			return message;
 		}
@@ -213,7 +213,7 @@ namespace Turn.Message
 		{
 			return ComputeMsPasswordBytes(key2, MsUsername.Value);
 		}
-		
+
 		public static byte[] ComputeMsPasswordBytes(byte[] key2, byte[] msUsername)
 		{
 			using (HMACSHA1 sha1 = new HMACSHA1(key2))
@@ -226,9 +226,9 @@ namespace Turn.Message
 		public byte[] ComputeMessageIntegrity(string password, bool longOrShortTerm)
 		{
 			if (longOrShortTerm)
-				return ComputeLongTermMessageIntegrity(storedBytes, messageIntegrityStartIndex, password);
+				return ComputeLongTermMessageIntegrity(storedBytes, messageIntegrityStartOffset, password);
 			else
-				return ComputeShortTermMessageIntegrity(storedBytes, messageIntegrityStartIndex, password);
+				return ComputeShortTermMessageIntegrity(storedBytes, messageIntegrityStartOffset, password);
 		}
 
 
@@ -239,7 +239,7 @@ namespace Turn.Message
 
 		public UInt32 ComputeFingerprint()
 		{
-			return ComputeFingerprint(storedBytes, fingerprintStartIndex);
+			return ComputeFingerprint(storedBytes, fingerprintStartOffset);
 		}
 
 		public bool IsRfc3489(AttributeType attributeType)
@@ -330,7 +330,7 @@ namespace Turn.Message
 				if (attribute != null && attribute.Ignore == false)
 				{
 					MessageLength += attribute.TotalLength;
-					
+
 					if (IsAttributePaddingEnabled())
 					{
 						if (MessageLength % 4 > 0)
@@ -412,33 +412,36 @@ namespace Turn.Message
 			Array.Copy(((UInt16)MessageLength).GetBigendianBytes(), 0, bytes, startIndex + 2, 2);
 			Array.Copy(TransactionId.Value, 0, bytes, startIndex + 4, TransactionId.Length);
 
-			startIndex += HeaderLength; 
+			startIndex += HeaderLength;
 		}
 
-		private void ParseHeader(byte[] bytes, int offset, int length)
+		private void ParseHeader(byte[] bytes, int startIndex, int length)
 		{
 			if (length < HeaderLength)
 				throw new TurnMessageException(ErrorCode.BadRequest, @"Too short message, less than 20 bytes (header size)");
 
-			UInt16 messageType = bytes.BigendianToUInt16(offset + 0);
+			UInt16 messageType = bytes.BigendianToUInt16(startIndex + 0);
 			if ((messageType & 0xC000) != 0)
 				throw new TurnMessageException(ErrorCode.BadRequest, @"The most significant two bits of Message Type MUST be set to zero");
 			if (Enum.IsDefined(typeof(MessageType), (Int32)messageType) == false)
 				throw new TurnMessageException(ErrorCode.BadRequest, @"Unknow message type");
 			this.MessageType = (MessageType)messageType;
 
-			this.MessageLength = bytes.BigendianToUInt16(offset + 2);
-			if (this.MessageLength != (length - offset - HeaderLength))
-				throw new TurnMessageException(ErrorCode.BadRequest);
+			this.MessageLength = bytes.BigendianToUInt16(startIndex + 2);
+			if (this.MessageLength != (length - HeaderLength))
+				throw new TurnMessageException(ErrorCode.BadRequest, string.Format(@"Wrong message length, wait for {0} actual is {1}", length - HeaderLength, this.MessageLength));
 
-			this.TransactionId = new TransactionId(bytes, offset + 4);
+			this.TransactionId = new TransactionId(bytes, startIndex + 4);
 		}
 
-		private void ParseAttributes(byte[] bytes, int length, int startIndex, TurnMessageRfc rfc)
+		private void ParseAttributes(byte[] bytes, int startIndex, int length, TurnMessageRfc rfc)
 		{
-			while (startIndex < length)
+			int currentIndex = startIndex + HeaderLength;
+			int endIndex = startIndex + length;
+
+			while (currentIndex < endIndex)
 			{
-				UInt16 attributeType1 = bytes.BigendianToUInt16(startIndex);
+				UInt16 attributeType1 = bytes.BigendianToUInt16(currentIndex);
 				if (Enum.IsDefined(typeof(AttributeType), (Int32)attributeType1) == false)
 					throw new TurnMessageException(ErrorCode.UnknownAttribute);
 				AttributeType attributeType = (AttributeType)attributeType1;
@@ -454,19 +457,22 @@ namespace Turn.Message
 					if (Fingerprint == null)
 					{
 						if (storedBytes == null)
-							storedBytes = (byte[])bytes.Clone();
-						fingerprintStartIndex = startIndex;
+						{
+							storedBytes = new byte[length];
+							Array.Copy(bytes, startIndex, storedBytes, 0, length);
+						}
+						fingerprintStartOffset = currentIndex - startIndex;
 						Fingerprint = new Fingerprint();
-						Fingerprint.Parse(bytes, ref startIndex);
+						Fingerprint.Parse(bytes, ref currentIndex);
 					}
 					else
 					{
-						Attribute.Skip(bytes, ref startIndex);
+						Attribute.Skip(bytes, ref currentIndex);
 					}
 				}
 				else if (MessageIntegrity != null)
 				{
-					Attribute.Skip(bytes, ref startIndex);
+					Attribute.Skip(bytes, ref currentIndex);
 				}
 				else
 				{
@@ -474,27 +480,27 @@ namespace Turn.Message
 					{
 						case AttributeType.AlternateServer:
 							AlternateServer = new AlternateServer();
-							AlternateServer.Parse(bytes, ref startIndex);
+							AlternateServer.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Bandwidth:
 							Bandwidth = new Bandwidth();
-							Bandwidth.Parse(bytes, ref startIndex);
+							Bandwidth.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Data:
 							Data = new Data();
-							Data.Parse(bytes, ref startIndex);
+							Data.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.DestinationAddress:
 							DestinationAddress = new DestinationAddress();
-							DestinationAddress.Parse(bytes, ref startIndex);
+							DestinationAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.ErrorCode:
 							ErrorCodeAttribute = new ErrorCodeAttribute();
-							ErrorCodeAttribute.Parse(bytes, ref startIndex);
+							ErrorCodeAttribute.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Fingerprint:
@@ -502,73 +508,74 @@ namespace Turn.Message
 
 						case AttributeType.Lifetime:
 							Lifetime = new Lifetime();
-							Lifetime.Parse(bytes, ref startIndex);
+							Lifetime.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.MagicCookie:
 							MagicCookie = new MagicCookie();
-							MagicCookie.Parse(bytes, ref startIndex);
+							MagicCookie.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.MappedAddress:
 							MappedAddress = new MappedAddress();
-							MappedAddress.Parse(bytes, ref startIndex);
+							MappedAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.MessageIntegrity:
-							messageIntegrityStartIndex = startIndex;
+							messageIntegrityStartOffset = currentIndex - startIndex;
 							if (storedBytes == null)
 							{
 								if (rfc == TurnMessageRfc.MsTurn)
 								{
-									storedBytes = new byte[GetPadded64(messageIntegrityStartIndex)];
-									Array.Copy(bytes, storedBytes, messageIntegrityStartIndex);
+									storedBytes = new byte[GetPadded64(messageIntegrityStartOffset)];
+									Array.Copy(bytes, startIndex, storedBytes, 0, messageIntegrityStartOffset);
 								}
 								else
 								{
-									storedBytes = (byte[])bytes.Clone();
+									storedBytes = new byte[length];
+									Array.Copy(bytes, startIndex, storedBytes, 0, length);
 								}
 							}
 							MessageIntegrity = new MessageIntegrity();
-							MessageIntegrity.Parse(bytes, ref startIndex);
+							MessageIntegrity.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.MsVersion:
 							MsVersion = new MsVersion();
-							MsVersion.Parse(bytes, ref startIndex);
+							MsVersion.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.MsSequenceNumber:
 							MsSequenceNumber = new MsSequenceNumber();
-							MsSequenceNumber.Parse(bytes, ref startIndex);
+							MsSequenceNumber.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.RemoteAddress:
 							RemoteAddress = new RemoteAddress();
-							RemoteAddress.Parse(bytes, ref startIndex);
+							RemoteAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Software:
 							Software = new Software();
-							Software.Parse(bytes, ref startIndex);
+							Software.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.UnknownAttributes:
 							UnknownAttributes = new UnknownAttributes();
 							// Not Implemented
-							UnknownAttributes.Parse(bytes, ref startIndex);
+							UnknownAttributes.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Username:
 							if (MsVersion != null)
 							{
 								MsUsername = new MsUsername();
-								MsUsername.Parse(bytes, ref startIndex);
+								MsUsername.Parse(bytes, ref currentIndex);
 							}
 							else
 							{
 								Username = new Username();
-								Username.Parse(bytes, ref startIndex);
+								Username.Parse(bytes, ref currentIndex);
 							}
 							break;
 
@@ -578,39 +585,39 @@ namespace Turn.Message
 						case AttributeType.UseCandidate:
 						case AttributeType.IceControlled:
 						case AttributeType.IceControlling:
-							Attribute.Skip(bytes, ref startIndex);
+							Attribute.Skip(bytes, ref currentIndex);
 							break;
 
 
 						// rfc3489
 						case AttributeType.ChangedAddress:
 							ChangedAddress = new ChangedAddress();
-							ChangedAddress.Parse(bytes, ref startIndex);
+							ChangedAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.ChangeRequest:
 							ChangeRequest = new ChangeRequest();
-							ChangeRequest.Parse(bytes, ref startIndex);
+							ChangeRequest.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.ResponseAddress:
 							ResponseAddress = new ResponseAddress();
-							ResponseAddress.Parse(bytes, ref startIndex);
+							ResponseAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.SourceAddress:
 							SourceAddress = new SourceAddress();
-							SourceAddress.Parse(bytes, ref startIndex);
+							SourceAddress.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.ReflectedFrom:
 							ReflectedFrom = new ReflectedFrom();
-							ReflectedFrom.Parse(bytes, ref startIndex);
+							ReflectedFrom.Parse(bytes, ref currentIndex);
 							break;
 
 						case AttributeType.Password:
 							Password = new Password();
-							Password.Parse(bytes, ref startIndex);
+							Password.Parse(bytes, ref currentIndex);
 							break;
 
 
@@ -622,17 +629,17 @@ namespace Turn.Message
 								{
 									case AttributeType.Nonce:
 										Nonce = new Nonce(rfc);
-										Nonce.Parse(bytes, ref startIndex);
+										Nonce.Parse(bytes, ref currentIndex);
 										break;
 
 									case AttributeType.Realm:
 										Realm = new Realm(rfc);
-										Realm.Parse(bytes, ref startIndex);
+										Realm.Parse(bytes, ref currentIndex);
 										break;
 
 									case AttributeType.XorMappedAddress:
 										XorMappedAddress = new XorMappedAddress(rfc);
-										XorMappedAddress.Parse(bytes, ref startIndex, TransactionId);
+										XorMappedAddress.Parse(bytes, ref currentIndex, TransactionId);
 										break;
 
 									default:
@@ -645,17 +652,17 @@ namespace Turn.Message
 								{
 									case AttributeType.NonceStun:
 										Nonce = new Nonce(rfc);
-										Nonce.Parse(bytes, ref startIndex);
+										Nonce.Parse(bytes, ref currentIndex);
 										break;
 
 									case AttributeType.RealmStun:
 										Realm = new Realm(rfc);
-										Realm.Parse(bytes, ref startIndex);
+										Realm.Parse(bytes, ref currentIndex);
 										break;
 
 									case AttributeType.XorMappedAddressStun:
 										XorMappedAddress = new XorMappedAddress(rfc);
-										XorMappedAddress.Parse(bytes, ref startIndex, TransactionId);
+										XorMappedAddress.Parse(bytes, ref currentIndex, TransactionId);
 										break;
 
 									default:
@@ -668,8 +675,8 @@ namespace Turn.Message
 
 				if (rfc != TurnMessageRfc.MsTurn)
 				{
-					if (startIndex % 4 > 0)
-						startIndex += 4 - startIndex % 4;
+					if (currentIndex % 4 > 0)
+						currentIndex += 4 - currentIndex % 4;
 				}
 			}
 		}
