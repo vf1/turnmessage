@@ -109,7 +109,7 @@ namespace Turn.Message
 			return message;
 		}
 
-		public static MessageType? SafeGetMessageType(byte[] bytes, int length, int startIndex)
+		public static MessageType? SafeGetMessageType(byte[] bytes, int startIndex, int length)
 		{
 			if (length < 2)
 				return null;
@@ -122,14 +122,14 @@ namespace Turn.Message
 			return (MessageType)messageType;
 		}
 
-		public static TransactionId SafeGetTransactionId(byte[] bytes, int length)
+		public static TransactionId SafeGetTransactionId(byte[] bytes, int startIndex, int length)
 		{
 			TransactionId id = null;
 
 			try
 			{
 				if (length >= HeaderLength)
-					id = new TransactionId(bytes, TransactionId.DefaultStartIndex);
+					id = new TransactionId(bytes, startIndex + TransactionId.DefaultStartIndex);
 			}
 			catch
 			{
