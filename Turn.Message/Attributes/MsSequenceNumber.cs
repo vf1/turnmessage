@@ -30,7 +30,7 @@ namespace Turn.Message
 			ValueLength = 0x0018;
 		}
 
-		public byte[] ConnectionId { get; set; }
+		public ConnectionId ConnectionId;
 
 		public UInt32 SequenceNumber { get; set; }
 
@@ -43,7 +43,8 @@ namespace Turn.Message
 				throw new ArgumentException("ConnectionId must be a 20 bytes length.");
 #endif
 
-			CopyBytes(bytes, ref startIndex, ConnectionId);
+			ConnectionId.GetBytes(bytes, ref startIndex);
+
 			CopyBytes(bytes, ref startIndex, SequenceNumber.GetBigendianBytes());
 		}
 
@@ -51,9 +52,7 @@ namespace Turn.Message
 		{
 			ParseValidateHeader(bytes, ref startIndex);
 
-			ConnectionId = new byte[20];
-			Array.Copy(bytes, startIndex, ConnectionId, 0, ConnectionId.Length);
-			startIndex += ConnectionId.Length;
+			ConnectionId.Parse(bytes, ref startIndex);
 
 			SequenceNumber = bytes.BigendianToUInt32(ref startIndex);
 		}

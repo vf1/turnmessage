@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F4E8F6DD-0764-4DE8-AC82-74CFB1D03358}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ConnectionId.cs" />
     <Compile Include="ErrorCode.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="MessageType.cs" />
@@ -82,10 +83,4 @@
     <Compile Include="Tools\Saslprep.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Attributes\" />
-    <Folder Include="Attributes\Base\" />
-    <Folder Include="Attributes\Rfc3489\" />
-    <Folder Include="Tools\" />
-  </ItemGroup>
 </Project>
