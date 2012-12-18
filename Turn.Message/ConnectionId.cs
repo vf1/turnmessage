@@ -73,5 +73,10 @@ namespace Turn.Message
 		{
 			return Value1.GetHashCode() ^ Value2.GetHashCode() ^ Value3.GetHashCode();
 		}
+
+        public override string ToString()
+        {
+            return string.Format("{0:x16}{1:x16}{2:x8}", Value1, Value2, Value3);
+        }
 	}
 }

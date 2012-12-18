@@ -58,6 +58,7 @@
     <Compile Include="BigendianTest.cs" />
     <Compile Include="ChangedAddressTest.cs" />
     <Compile Include="ChangeRequestTest.cs" />
+    <Compile Include="ConnectionIdTest.cs" />
     <Compile Include="DataTest.cs" />
     <Compile Include="DestinationAddressTest.cs" />
     <Compile Include="ErrorCodeAttributeTest.cs" />
